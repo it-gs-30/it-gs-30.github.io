@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Быки и коровы</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 500px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        input {
+            padding: 8px;
+            width: 80%;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .hidden {
+            display: none;
+        }
+        .log {
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            background: #eee;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="begin">
+        <h1>Быки и коровы</h1>
+        <p><strong>Суть игры:</strong> угадать число.</p>
+        <p>Вы вводите число, после чего пересчитывается количество быков и коров:</p>
+        <ul>
+            <li><strong>Коровы</strong> — количество цифр, которые есть и в вашем, и в загаданном числе.</li>
+            <li><strong>Быки</strong> — количество цифр, которые стоят на одном и том же месте.</li>
+        </ul>
+        <p><em>Пример:</em> загадано 12045, ваше число — 12054. Быков - 3, коров - 2.</p>
+        <button onclick="num()">Начать игру</button>
+    </div>
+
+    <div id="num-dif" class="hidden">
+        <label for="digit-count">Сколько цифр вы бы хотели в числе? (от 3 до 9):</label><br>
+        <input type="number" id="digit-count" min="3" max="9" value="4"><br>
+        <button onclick="startGame()">Подтвердить</button>
+    </div>
+
+    <div id="game" class="hidden">
+        <h2 id="game-title">Игра началась!</h2>
+        <label id="input-label" for="user-guess">Введите число целиком (цифры от 0 до 9):</label><br>
+        <input type="text" id="user-guess" inputmode="numeric" pattern="[0-9]*" placeholder="например: 1234.">
+        <button onclick="revisor()">Проверить</button>
+        <div class="log" id="game-log"></div>
+    </div>
+    <div id="win" class="hidden">
+        <h2>Вы угадали!</h2>
+        <p id="win-stats"></p>
+        <button onclick="resetGame()">Играть заново</button>
+    </div>
+</div>
+<script>
+    let secretCode = [];
+    let digitCount = 0;
+    let attempts = 0;
+    function num() {
+        document.getElementById('begin').classList.add('hidden');
+        document.getElementById('num-dif').classList.remove('hidden');
+    }
+    function startGame() {
+        const input = document.getElementById('digit-count').value;
+        digitCount = parseInt(input);
+
+        if (isNaN(digitCount) || digitCount < 3 || digitCount > 9) {
+            alert("Число должно быть от 3-х до 9-ти!");
+            return;
+        }
+        const digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        secretCode = [];
+        for (let i = 0; i < digitCount; i++) {
+            const randomIndex = Math.floor(Math.random() * digits.length);
+            secretCode.push(digits.splice(randomIndex, 1)[0]);
+        }
+        attempts = 0;
+        document.getElementById('game-title').innerText = `Загадано число из ${digitCount} цифр`;
+        document.getElementById('input-label').innerText = `Введите число из ${digitCount} цифр:`;
+        document.getElementById('user-guess').value = '';
+        document.getElementById('game-log').innerHTML = '';
+        document.getElementById('num-dif').classList.add('hidden');
+        document.getElementById('game').classList.remove('hidden');
+    }
+    function revisor() {
+        const guessInput = document.getElementById('user-guess').value.trim();
+        if (!guessInput) return;
+        const userCode = guessInput.split('').map(Number); 
+        if (userCode.length !== digitCount || userCode.some(isNaN)) {
+            alert(`Введите ровно ${digitCount} цифр(ы)!`);
+            return;
+    }
+        attempts++;
+        let bulls = 0;
+        let cows = 0;
+        if (new Set(userCode).size !== userCode.length) {
+            alert("Ошибка: введите число без повторяющихся цифр!");
+            return; 
+        }
+        for (let i = 0; i < digitCount; i++) {
+            if (userCode[i] === secretCode[i]) {
+                bulls++;
+            } else if (secretCode.includes(userCode[i])) {
+                cows++;
+            }
+        }
+
+        const log = document.getElementById('game-log');
+        log.innerHTML += `Ход ${attempts}: [${guessInput}] -> Быков: ${bulls}, Коров: ${cows}<br>`;
+        log.scrollTop = log.scrollHeight;
+        document.getElementById('user-guess').value = '';
+        if (bulls === digitCount) {
+            document.getElementById('game').classList.add('hidden');
+            document.getElementById('win').classList.remove('hidden');
+            document.getElementById('win-stats').innerHTML = `Число попыток: ${attempts}<br>Сложность: ${digitCount} цифр(ы)`;
+        }
+    }
+    function resetGame() {
+        document.getElementById('win').classList.add('hidden');
+        document.getElementById('num-dif').classList.remove('hidden');
+    }
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            if (!document.getElementById('begin').classList.contains('hidden')) {
+                num();
+            } else if (!document.getElementById('num-dif').classList.contains('hidden')) {
+                startGame();
+            } else if (!document.getElementById('game').classList.contains('hidden')) {
+                revisor();
+            } else if (!document.getElementById('win').classList.contains('hidden')) {
+                resetGame();
+            }
+        }
+    });
+</script>
+</body>
+</html>
