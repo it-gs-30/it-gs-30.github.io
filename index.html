@@ -82,7 +82,7 @@
         <div class="log" id="game-log"></div>
     </div>
     <div id="win" class="hidden">
-        <h2>Вы угадали!</h2>
+        <h2>Вы угадали! 🎉</h2>
         <p id="win-stats"></p>
         <button onclick="resetGame()">Играть заново</button>
     </div>
@@ -129,7 +129,7 @@
         let bulls = 0;
         let cows = 0;
         if (new Set(userCode).size !== userCode.length) {
-            alert("Ошибка: введите число без повторяющихся цифр!");
+            alert("Введите число без повторяющихся цифр!");
             return; 
         }
         for (let i = 0; i < digitCount; i++) {
@@ -139,7 +139,6 @@
                 cows++;
             }
         }
-
         const log = document.getElementById('game-log');
         log.innerHTML += `Ход ${attempts}: [${guessInput}] -> Быков: ${bulls}, Коров: ${cows}<br>`;
         log.scrollTop = log.scrollHeight;
