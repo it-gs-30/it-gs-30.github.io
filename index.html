@@ -57,19 +57,20 @@
 <body>
 <div class="container">
     <div id="begin">
-        <h1>Быки и коровы</h1>
+        <h1>🐂 Быки и коровы 🐄</h1>
         <p><strong>Суть игры:</strong> угадать число.</p>
         <p>Вы вводите число, после чего пересчитывается количество быков и коров:</p>
         <ul>
             <li><strong>Коровы</strong> — количество цифр, которые есть и в вашем, и в загаданном числе.</li>
             <li><strong>Быки</strong> — количество цифр, которые стоят на одном и том же месте.</li>
         </ul>
-        <p><em>Пример:</em> загадано 12045, ваше число — 12054. Быков - 3, коров - 2.</p>
+        <p><em>Пример:</em> загадано 12054, ваше число — 12345. Быков - 2 (цифры 1 и 2), коров - 2 (цифры 4 и 5).</p>
         <button onclick="num()">Начать игру</button>
+        <p><em>Вместо любой кнопки можно нажимать <strong>[↵ Enter]</strong></em></p>
     </div>
 
     <div id="num-dif" class="hidden">
-        <label for="digit-count">Сколько цифр вы бы хотели в числе? (от 3 до 9):</label><br>
+        <label for="digit-count">🛠️ Сколько цифр вы бы хотели в числе? (от 3 до 9):</label><br>
         <input type="number" id="digit-count" min="3" max="9" value="4"><br>
         <button onclick="startGame()">Подтвердить</button>
     </div>
@@ -81,12 +82,14 @@
         <button onclick="revisor()">Проверить</button>
         <div class="log" id="game-log"></div>
     </div>
+
     <div id="win" class="hidden">
         <h2>Вы угадали! 🎉</h2>
         <p id="win-stats"></p>
         <button onclick="resetGame()">Играть заново</button>
     </div>
 </div>
+
 <script>
     let secretCode = [];
     let digitCount = 0;
@@ -98,7 +101,6 @@
     function startGame() {
         const input = document.getElementById('digit-count').value;
         digitCount = parseInt(input);
-
         if (isNaN(digitCount) || digitCount < 3 || digitCount > 9) {
             alert("Число должно быть от 3-х до 9-ти!");
             return;
@@ -140,7 +142,7 @@
             }
         }
         const log = document.getElementById('game-log');
-        log.innerHTML += `Ход ${attempts}: [${guessInput}] -> Быков: ${bulls}, Коров: ${cows}<br>`;
+        log.innerHTML += `Ход ${attempts}: ${guessInput} -> Быков: ${bulls}, Коров: ${cows}<br>`;
         log.scrollTop = log.scrollHeight;
         document.getElementById('user-guess').value = '';
         if (bulls === digitCount) {
