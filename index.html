@@ -127,13 +127,14 @@
             alert(`Введите ровно ${digitCount} цифр(ы)!`);
             return;
     }
-        attempts++;
+        
         let bulls = 0;
         let cows = 0;
         if (new Set(userCode).size !== userCode.length) {
             alert("Введите число без повторяющихся цифр!");
             return; 
         }
+        attempts++;
         for (let i = 0; i < digitCount; i++) {
             if (userCode[i] === secretCode[i]) {
                 bulls++;
